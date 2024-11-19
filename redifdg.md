@@ -1,17 +1,27 @@
----
-title: "Untitled"
-output: 
-  flexdashboard::flex_dashboard:
-    orientation: columns
-    vertical_layout: fill
-    includes:
-      in_header: myheader.html
-runtime: shiny
----
+#Option one: direct link to JS event
+<script type="text/javascript">
+    document.getElementById("myButton").onclick = function () {
+        location.href = "http://www.google.com";
+    };
+</script>
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE )
+```{r, echo=F}
+actionButton("myButton", "Redirect")
+```
 
-fileConn <- file("myheader.html")
-writeLines('<meta http-equiv="refresh" content="0; url=http://www.stackoverflow.com/"/>', fileConn)
-close(fileConn)
+#Option two: dedicate redirect js, triggered by shinyjs
+<script type="text/javascript">
+    go_away = function () {
+        location.href = "http://www.google.com";
+    };
+</script> 
+
+```{r, echo=F}
+shinyjs::useShinyjs(rmd = TRUE)
+actionButton("myButton2", "Redirect!!")
+
+observeEvent(input$myButton2, {
+  shinyjs::runjs('go_away()')
+})
+
+```
